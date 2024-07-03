@@ -1,17 +1,28 @@
+import { useState } from "react";
+import { useTodos } from "../../context/TodoContext/TodoContext";
+
 function Form() {
+  const [todo, setTodo] = useState("");
+  const { setTodos } = useTodos();
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    // reset the form
-    event.target.reset();
+
+    if (todo) {
+      setTodos((prevtodos) => [...prevtodos, { task: todo, status: false }]);
+      setTodo("");
+    }
   };
   return (
-    <form className="form">
+    <form onSubmit={handleSubmit} className="form">
       <label htmlFor="todo">
         <input
           type="text"
           id="todo"
           placeholder="Write your next task"
           name="todo"
+          value={todo}
+          onChange={(e) => setTodo(e.target.value)}
         />
       </label>
       <button>

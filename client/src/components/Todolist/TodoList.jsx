@@ -1,6 +1,9 @@
+import { useTodos } from "../../context/TodoContext/TodoContext";
 import TodoItem from "../TodoItem/TodoItem";
 
-function TODOList({ todos = [{ task: "Hello World " }] }) {
+function TODOList() {
+  const { todos } = useTodos();
+
   return (
     <ol className="todo_list">
       {todos && todos.length > 0 ? (

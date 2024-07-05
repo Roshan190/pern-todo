@@ -1,16 +1,31 @@
 import { useState } from "react";
 import { useTodos } from "../../context/TodoContext/TodoContext";
+import addTodo from "../../apis/addTodo";
 
 function Form() {
   const [todo, setTodo] = useState("");
-  const { setTodos } = useTodos();
+  const { getTodoList } = useTodos();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (todo) {
-      setTodos((prevtodos) => [...prevtodos, { task: todo, status: false }]);
-      setTodo("");
+      try {
+        const { data, status } = await addTodo({
+          user_email: "test@gmail.com",
+          title: todo,
+          status: false,
+        });
+
+        if (status === 200) {
+          getTodoList();
+          setTodo("");
+        } else {
+          alert("Failed to add TODO.");
+        }
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
   return (

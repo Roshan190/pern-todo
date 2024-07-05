@@ -1,16 +1,53 @@
+import deleteTodo from "../../apis/deleteTodo";
+import updateTodo from "../../apis/updateTodo";
+import { useTodos } from "../../context/TodoContext/TodoContext";
+
 export default function TodoItem({ item }) {
+  const { getTodoList } = useTodos();
+
+  const onDelete = async () => {
+    try {
+      const { status } = await deleteTodo({ todoId: item.id });
+
+      if (status === 200) {
+        getTodoList();
+      } else {
+        alert("Failed to delete TODO.");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const onStatusChange = async () => {
+    try {
+      const { status } = await updateTodo({
+        id: item.id,
+        status: !item.status,
+        title: item.title,
+        user_email: "test@gmail.com",
+      });
+
+      if (status === 200) {
+        getTodoList();
+      } else {
+        alert("Failed to delete TODO.");
+      }
+    } catch (error) {}
+  };
+
   return (
     <li className="todo_item">
-      <button className="todo_items_left">
-        <Check />
-        <p>{item?.task}</p>
+      <button onClick={onStatusChange} className="todo_items_left">
+        <Check checked={item.status} />
+        <p>{item?.title}</p>
       </button>
       <div className="todo_items_right">
         <button>
           <Edit />
           <span className="visually-hidden">Edit</span>
         </button>
-        <button>
+        <button onClick={onDelete}>
           <Delete />
           <span className="visually-hidden">Delete</span>
         </button>
@@ -19,7 +56,7 @@ export default function TodoItem({ item }) {
   );
 }
 
-function Check({}) {
+function Check({ checked }) {
   return (
     <svg
       clipRule="evenodd"
@@ -31,7 +68,7 @@ function Check({}) {
       width={34}
       height={34}
       stroke="#22C55E"
-      fill="#0d0d0d"
+      fill={checked ? "#22C55E" : "#0d0d0d"}
     >
       <circle cx="11.998" cy="11.998" fillRule="nonzero" r="9.998" />
     </svg>
